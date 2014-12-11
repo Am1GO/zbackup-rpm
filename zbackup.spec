@@ -1,9 +1,8 @@
 Name:		zbackup
 Version:	1.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	A versatile deduplicating backup tool
 
-Group:		Applications/Archiving
 License:	GPLv2+ and OpenSSL
 URL:		http://zbackup.org/
 Source0:	https://github.com/zbackup/zbackup/archive/%{version}.tar.gz
@@ -14,7 +13,6 @@ BuildRequires:	openssl-devel
 BuildRequires:	protobuf-devel
 BuildRequires:	zlib-devel
 BuildRequires:	pandoc
-Requires:	xz-libs zlib protobuf openssl-libs
 
 %description
 zbackup is a globally-deduplicating backup tool, based on the ideas
@@ -29,27 +27,31 @@ required is very low.
 %setup -q
 
 %build
-%{__install} -d objdir
-cd objdir
+%{__mkdir} -p objdir tartool/objdir
+pushd objdir
+%cmake ..
+%{__make} %{?_smp_mflags}
+popd
+pushd tartool/objdir
 %cmake ..
 %{__make} %{?_smp_mflags}
 
 %install
-%{__rm} -rf %{buildroot}
 %{__make} install -C objdir DESTDIR=%{buildroot}
-%{__mkdir} -p %{buildroot}%{_mandir}/man1/
+%{__install} tartool/objdir/tartool %{buildroot}%{_bindir}/
 pandoc -s -f markdown_github -t man -V title=%{name} -V section=1 -V date="$(LANG=C date -d @$(stat -c'%Z' README.md) +'%B %d, %Y')" README.md -o %{name}.1
-%{__install} -m 644 %{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
-
-%clean
-%{__rm} -rf %{buildroot}
+%{__install} -D -m 644 %{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
+ln -s %{name}.1 %{buildroot}%{_mandir}/man1/tartool.1
 
 %files
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/%{name}
-%doc LICENSE*
-%{_mandir}/man1/%{name}.1.gz
+%{_bindir}/*
+%{_mandir}/man1/*.1.*
+%license LICENSE*
 
 %changelog
-* Wed Dec 10 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3.1
+* Thu Dec 11 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-2
+- Modified in appliance with https://bugzilla.redhat.com/show_bug.cgi?id=1172525#c1
+- Added tartool
+
+* Wed Dec 10 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-1
 - Initial version of the package
