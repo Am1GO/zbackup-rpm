@@ -1,6 +1,8 @@
+%global _hardened_build 1
+
 Name:		zbackup
 Version:	1.3
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	A versatile deduplicating backup tool
 
 License:	GPLv2+ and OpenSSL
@@ -49,6 +51,9 @@ ln -s %{name}.1 %{buildroot}%{_mandir}/man1/tartool.1
 %license LICENSE*
 
 %changelog
+* Thu Dec 12 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-3
+- Produce hardened binaries
+
 * Thu Dec 11 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-2
 - Modified in appliance with https://bugzilla.redhat.com/show_bug.cgi?id=1172525#c1
 - Added tartool
