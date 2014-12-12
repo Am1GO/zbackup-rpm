@@ -51,7 +51,7 @@ ln -s %{name}.1 %{buildroot}%{_mandir}/man1/tartool.1
 %license LICENSE*
 
 %changelog
-* Thu Dec 12 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-3
+* Fri Dec 12 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-3
 - Produce hardened binaries
 
 * Thu Dec 11 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-2
