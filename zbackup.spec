@@ -2,10 +2,10 @@
 
 Name:		zbackup
 Version:	1.3
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	A versatile deduplicating backup tool
 
-License:	GPLv2+ and OpenSSL
+License:	GPLv2+ with exceptions
 URL:		http://zbackup.org/
 Source0:	https://github.com/zbackup/zbackup/archive/%{version}.tar.gz
 
@@ -29,33 +29,36 @@ required is very low.
 %setup -q
 
 %build
-%{__mkdir} -p objdir tartool/objdir
+mkdir -p objdir tartool/objdir
 pushd objdir
 %cmake ..
-%{__make} %{?_smp_mflags}
+make %{?_smp_mflags}
 popd
 pushd tartool/objdir
 %cmake ..
-%{__make} %{?_smp_mflags}
+make %{?_smp_mflags}
 
 %install
-%{__make} install -C objdir DESTDIR=%{buildroot}
-%{__install} tartool/objdir/tartool %{buildroot}%{_bindir}/
+make install -C objdir DESTDIR=%{buildroot}
+install tartool/objdir/tartool %{buildroot}%{_bindir}/
 pandoc -s -f markdown_github -t man -V title=%{name} -V section=1 -V date="$(LANG=C date -d @$(stat -c'%Z' README.md) +'%B %d, %Y')" README.md -o %{name}.1
-%{__install} -D -m 644 %{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
+install -D -m 644 %{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
 ln -s %{name}.1 %{buildroot}%{_mandir}/man1/tartool.1
 
 %files
 %{_bindir}/*
 %{_mandir}/man1/*.1.*
-%license LICENSE*
+%license LICENSE LICENSE-GPL*
 
 %changelog
+* Fri Dec 20 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-4
+- Modified in appliance with rhbz#1172525
+
 * Fri Dec 12 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-3
 - Produce hardened binaries
 
 * Thu Dec 11 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-2
-- Modified in appliance with https://bugzilla.redhat.com/show_bug.cgi?id=1172525#c1
+- Modified in appliance with rhbz#1172525
 - Added tartool
 
 * Wed Dec 10 2014 Vladimir Stackov <amigo.elite at gmail dot com> - 1.3-1
